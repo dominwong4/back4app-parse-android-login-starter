@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(MainActivity.this);
         Parse.initialize(new Parse.Configuration.Builder(this)
-                        .applicationId("MP6H592QYgcXg3SwdqFO1BAUtQz1ukNFSAuKDR2n")
-                        .clientKey("iL0IbxexpJFKh4Kx3aym8o6fbHrOWxeLGy1vmT7L")
+                        .applicationId("Your Back4app parse app id")
+                        .clientKey("you can found your client key on back4app dashboard")
                         .server("https://parseapi.back4app.com/").build()
         );
 
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    
+
                     progressDialog.dismiss();
                     alertDisplayer("Register Successful", "Welcome " + ParseUser.getCurrentUser().getUsername());
                 } else {
