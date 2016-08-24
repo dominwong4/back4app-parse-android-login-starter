@@ -17,15 +17,24 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.parse.FunctionCallback;
 import com.parse.LogInCallback;
 import com.parse.Parse;
+import com.parse.ParseBroadcastReceiver;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
+import com.parse.ParsePushBroadcastReceiver;
+import com.parse.ParseTwitterUtils;
 import com.parse.ParseUser;
+import com.parse.PushService;
 import com.parse.SaveCallback;
 import com.parse.SignUpCallback;
 
@@ -40,8 +49,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -52,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     Button login;
     Button register;
     Button facebookLogin;
+    Button twitterLogin;
+    Button cloudCode;
 
     ProgressDialog progressDialog;
     final List<String> permissions = Arrays.asList("public_profile", "email");
@@ -69,6 +83,8 @@ public class MainActivity extends AppCompatActivity {
         login = (Button) findViewById(R.id.login);
         register = (Button) findViewById(R.id.register);
         facebookLogin = (Button) findViewById(R.id.facebookButton);
+        twitterLogin = (Button) findViewById(R.id.twitterButton);
+        cloudCode = (Button) findViewById(R.id.cloudCodeButon);
         t_username = (TextView) findViewById(R.id.usernameText);
         t_email = (TextView) findViewById(R.id.emailText);
         progressDialog = new ProgressDialog(MainActivity.this);
@@ -138,9 +154,48 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        twitterLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ParseTwitterUtils.logIn(MainActivity.this, new LogInCallback() {
+                    @Override
+                    public void done(ParseUser user, ParseException err) {
+                        if (user == null) {
+                            Log.d("MyApp", "Uh oh. The user cancelled the Twitter login.");
+                        } else if (user.isNew()) {
+                            Log.d("MyApp", "User signed up and logged in through Twitter!");
+                        } else {
+                            Log.d("MyApp", "User logged in through Twitter!");
+                        }
+                    }
+                });
+
+            }
+        });
+        cloudCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Map<String, String> parameters = new HashMap<String, String>();
+                ParseCloud.callFunctionInBackground("test", parameters, new FunctionCallback<Map<String, Object>>() {
+                    public void done(Map<String, Object> mapObject, ParseException e) {
+                        if (e == null){
+                            Toast.makeText(MainActivity.this, mapObject.get("answer").toString(), Toast.LENGTH_LONG).show();
+                        }
+                        else Log.d("Cloud",e.getMessage());
+                    }
+                });
+            }
+        });
+
+
+
+        Parse.setLogLevel(Parse.LOG_LEVEL_VERBOSE);
         FacebookSdk.sdkInitialize(getApplicationContext());
         ParseFacebookUtils.initialize(this);
-
+        ParseTwitterUtils.initialize("xCyRcswJvZtLpcqI5OYckLKCd","qEclZACDn4986AlP341A99dnXWv2wSZGBhjdOhAXSMke7POmrV");
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("GCMSenderId", "408752285858");
+        installation.saveInBackground();
     }
 
     void parseLogin(){
