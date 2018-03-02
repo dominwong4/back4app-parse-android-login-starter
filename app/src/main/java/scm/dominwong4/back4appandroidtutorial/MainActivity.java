@@ -102,16 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.setMessage("Please Wait");
                 progressDialog.setTitle("Logging in");
                 progressDialog.show();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            parseLogin();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                parseLogin();
             }
         });
 
@@ -121,16 +112,7 @@ public class MainActivity extends AppCompatActivity {
                 progressDialog.setMessage("Please Wait");
                 progressDialog.setTitle("Registering");
                 progressDialog.show();
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            parseRegister();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
+                parseRegister();
             }
         });
 
